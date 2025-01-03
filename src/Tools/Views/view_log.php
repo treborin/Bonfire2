@@ -10,6 +10,8 @@ $this->section('main') ?>
 
 <x-admin-box>
 
+    <div class="d-flex justify-content-end"><?= $filesPager  ?? '' ?></div>
+
     <div class="table-responsive">
         <table class="table table-hover nowrap" id="log">
             <tr>
