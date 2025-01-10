@@ -183,7 +183,7 @@ class ComponentRenderer
     private function factory(string $name, string $view): ?Component
     {
         // Locate the class in the same folder as the view
-        $class    = pascalize($name) . 'Component.php';
+        $class    = pascalize(str_replace('-', '_', $name)) . 'Component.php';
         $filePath = str_replace($name . '.php', $class, $view);
 
         if (empty($filePath)) {
