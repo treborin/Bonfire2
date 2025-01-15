@@ -1,13 +1,13 @@
 {
   "name": "lonnieezell/bonfire",
   "type": "project",
-  "description": "Drop-in admin panel form CodeIgniter 4",
+  "description": "Drop-in admin panel for CodeIgniter 4",
   "keywords": [
     "codeigniter",
     "codeigniter4",
     "bonfire"
   ],
-  "homepage": "https://github.com/lonnieezell/bonfire2-refactor",
+  "homepage": "https://github.com/lonnieezell/bonfire2",
   "license": "MIT",
   "require": {
     "php": "^7.4 || ^8.0",
@@ -68,6 +68,8 @@
   },
   "support": {
     "forum": "https://forum.codeigniter.com/",
-    "source": "https://github.com/lonnieezell/bonfire2-internals"
+    "source": "https://github.com/lonnieezell/bonfire2",
+    "issues": "https://github.com/lonnieezell/Bonfire2/issues",
+    "docs": "https://lonnieezell.github.io/Bonfire2/"
   }
 }
