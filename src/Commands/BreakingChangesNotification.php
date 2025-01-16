@@ -13,8 +13,8 @@ class BreakingChangesNotification extends BaseCommand
 
     public function run(array $params)
     {
-        $lastUpdateFile = BFPATH . 'last-update.txt';
-        $changelogFile = BFPATH . 'docs/intro/changelog.md';
+        $lastUpdateFile = BFPATH . '../last-update.txt';
+        $changelogFile  = BFPATH . '../docs/intro/changelog.md';
 
         // Read the last update date
         $lastUpdateDate = $this->getLastUpdateDate($lastUpdateFile);
@@ -23,13 +23,19 @@ class BreakingChangesNotification extends BaseCommand
         $breakingChangeDate = $this->getLatestBreakingChangeDate($changelogFile);
 
         if ($breakingChangeDate && (!$lastUpdateDate || $lastUpdateDate < $breakingChangeDate)) {
-            CLI::write('Warning: Breaking changes detected. Please read the changelog for more information.', 'yellow');
-            CLI::write('Breaking change date: ' . $breakingChangeDate, 'yellow');
+            CLI::write(
+                '======= WARNING: =======' . PHP_EOL .
+                'Breaking changes since the previous update of your Bonfire install detected. ' . PHP_EOL .
+                'You may need to update your app manually. ' . PHP_EOL .
+                'Please read the docs/intro/changelog.md file for more information.',
+                'yellow'
+            );
+            CLI::write('Latest breaking change date: ' . $breakingChangeDate, 'yellow');
 
-            // Update the last update date
-            file_put_contents($lastUpdateFile, $breakingChangeDate);
+            // Write new last update date
+            file_put_contents($lastUpdateFile, date('Y-m-d'));
         } else {
-            CLI::write('No new breaking changes detected.', 'green');
+            CLI::write('No new breaking changes in Bonfire detected since previous update.', 'green');
         }
     }
 
@@ -39,6 +45,8 @@ class BreakingChangesNotification extends BaseCommand
             return trim(file_get_contents($filePath));
         }
 
+        // Create the file if it does not exist
+        file_put_contents($filePath, '');
         return null;
     }
 
