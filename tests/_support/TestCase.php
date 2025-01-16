@@ -28,7 +28,7 @@ abstract class TestCase extends CIUnitTestCase
      * When migrations are ran, will ensure
      * all migrations in all modules will run.
      */
-    protected $namespace = '';
+    protected $namespace = null;
 
     /**
      * @var Factory
