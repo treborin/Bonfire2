@@ -39,18 +39,18 @@ class UserController extends AdminController
         /** @var UserFilter $userModel */
         $userModel = model(UserFilter::class);
 
-        $userModel->filter($this->request->getPost('filters'));
+        $userModel->filter($this->request->getGet('filters'));
 
-        $view = $this->request->getMethod() === 'post'
+        $view = $this->request->hasHeader('HX-Request')
             ? $this->viewPrefix . '_table'
             : $this->viewPrefix . 'list';
 
         return $this->render($view, [
             'headers' => [
-                'email'       => 'Email',
-                'username'    => 'Username',
-                'groups'      => 'Groups',
-                'last_active' => 'Last Active',
+                'email'       => lang('Users.headers.email'),
+                'username'    => lang('Users.headers.username'),
+                'groups'      => lang('Users.headers.groups'),
+                'last_active' => lang('Users.headers.last_active'),
             ],
             'showSelectAll' => true,
             'users'         => $userModel->paginate(setting('Site.perPage')),
@@ -69,6 +69,8 @@ class UserController extends AdminController
 
         $groups = setting('AuthGroups.groups');
         asort($groups);
+
+        helper('form');
 
         return $this->render($this->viewPrefix . 'form', [
             'groups' => $groups,
@@ -93,7 +95,7 @@ class UserController extends AdminController
 
         $user = $users->find($userId);
         if ($user === null) {
-            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', ['user']));
+            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', [lang('Users.userGenitive')]));
         }
 
         $groups = setting('AuthGroups.groups');
@@ -134,7 +136,7 @@ class UserController extends AdminController
 
         /** @phpstan-ignore-next-line */
         if ($user === null) {
-            return redirect()->back()->withInput()->with('error', lang('Bonfire.resourceNotFound', ['user']));
+            return redirect()->back()->withInput()->with('error', lang('Bonfire.resourceNotFound', [lang('Users.userGenitive')]));
         }
 
         /**
@@ -270,7 +272,7 @@ class UserController extends AdminController
         // Save the user's meta fields
         $user->syncMeta($this->request->getPost('meta') ?? []);
 
-        return redirect()->to($user->adminLink())->with('message', lang('Bonfire.resourceSaved', ['user']));
+        return redirect()->to($user->adminLink())->with('message', lang('Bonfire.resourceSaved', [lang('Users.user')]));
     }
 
     /**
@@ -297,7 +299,7 @@ class UserController extends AdminController
 
         /** @phpstan-ignore-next-line */
         if ($user === null) {
-            return redirect()->back()->withInput()->with('error', lang('Bonfire.resourceNotFound', ['user']));
+            return redirect()->back()->withInput()->with('error', lang('Bonfire.resourceNotFound', [lang('Users.userGenitive')]));
         }
 
         if (! $this->validate(['password' => 'required|strong_password', 'pass_confirm' => 'required|matches[password]'])) {
@@ -316,7 +318,7 @@ class UserController extends AdminController
             model(UserIdentityModel::class)->save($identity);
         }
 
-        return redirect()->to($user->adminLink('/security'))->with('message', lang('Bonfire.resourceSaved', ['user']));
+        return redirect()->to($user->adminLink('/security'))->with('message', lang('Bonfire.resourceSaved', [lang('Users.user')]));
     }
 
     /**
@@ -335,7 +337,7 @@ class UserController extends AdminController
         $user = $users->find($userId);
 
         if ($user === null) {
-            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', ['user']));
+            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', [lang('Users.userGenitive')]));
         }
 
         if (! $users->delete($user->id)) {
@@ -344,7 +346,7 @@ class UserController extends AdminController
             return redirect()->back()->with('error', lang('Bonfire.unknownError'));
         }
 
-        return redirect()->back()->with('message', lang('Bonfire.resourceDeleted', ['user']));
+        return redirect()->back()->with('message', lang('Bonfire.resourceDeleted', [lang('Users.user')]));
     }
 
     /**
@@ -360,7 +362,7 @@ class UserController extends AdminController
         $ids = $this->request->getPost('selects');
 
         if (empty($ids)) {
-            return redirect()->back()->with('error', lang('Bonfire.resourcesNotSelected', ['users']));
+            return redirect()->back()->with('error', lang('Bonfire.resourcesNotSelected', [lang('Users.users')]));
         }
         $ids = array_keys($ids);
 
@@ -372,7 +374,7 @@ class UserController extends AdminController
             return redirect()->back()->with('error', lang('Bonfire.unknownError'));
         }
 
-        return redirect()->back()->with('message', lang('Bonfire.resourcesDeleted', ['users']));
+        return redirect()->back()->with('message', lang('Bonfire.resourcesDeleted', [lang('Users.users')]));
     }
 
     /**
@@ -392,12 +394,12 @@ class UserController extends AdminController
         /** @var User|null $user */
         $user = $users->find($userId);
         if ($user === null) {
-            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', ['user']));
+            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', [lang('Users.userGenitive')]));
         }
 
         /** @var LoginModel $loginModel */
         $loginModel = model(LoginModel::class);
-        $logins     = $loginModel->where('identifier', $user->email)->orderBy('date', 'desc')->limit(20)->findAll();
+        $logins     = $loginModel->where('identifier', $user->email)->orderBy('date', 'desc')->findAll(20);
 
         return $this->render($this->viewPrefix . 'security', [
             'user'   => $user,
@@ -420,7 +422,7 @@ class UserController extends AdminController
         $users = model(UserModel::class);
         $user  = $users->find($userId);
         if ($user === null) {
-            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', ['user']));
+            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', [lang('Users.userGenitive')]));
         }
 
         $permissions = setting('AuthGroups.permissions');
@@ -449,7 +451,7 @@ class UserController extends AdminController
         /** @var User|null $user */
         $user = $users->find($userId);
         if ($user === null) {
-            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', ['user']));
+            return redirect()->back()->with('error', lang('Bonfire.resourceNotFound', [lang('Users.userGenitive')]));
         }
 
         $permissions = $this->request->getPost('permissions') ?? [];
@@ -469,7 +471,7 @@ class UserController extends AdminController
 
         $user->syncPermissions(...$permissions);
 
-        return redirect()->back()->with('message', lang('Bonfire.resourceSaved', ['permissions']));
+        return redirect()->back()->with('message', lang('Bonfire.resourceSaved', [lang('Users.permissions')]));
     }
 
     /**

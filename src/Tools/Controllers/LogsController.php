@@ -20,7 +20,7 @@ class LogsController extends AdminController
     protected $theme      = 'Admin';
     protected $viewPrefix = 'Bonfire\Tools\Views\\';
     protected $logsPath   = WRITEPATH . 'logs/';
-    protected $ext = '.log';
+    protected $ext        = '.log';
     protected $logsLimit;
     protected $logsHandler;
 
@@ -39,11 +39,29 @@ class LogsController extends AdminController
     public function index()
     {
         // Load the Log Files.
-        $logs = get_filenames($this->logsPath);
+        $logs = array_reverse(get_filenames($this->logsPath));
 
-        unset($logs[0]);
+        // Define the regular expression pattern for log files
+        $logPattern = '/^log-\d{4}-\d{2}-\d{2}\.log$/';
+        // Filter the array removing index.html and other files that do not match
+        $logs = array_filter($logs, function ($filename) use ($logPattern) {
+            return preg_match($logPattern, $filename);
+        });
 
         $result = $this->logsHandler->paginateLogs($logs, $this->logsLimit);
+
+        // Cycle through the $result array and attach the content property
+        for ($i = 0; $i < count($result['logs']); $i++) {
+            if ($result['logs'][$i] === 'index.html') {
+                unset($result['logs'][$i]);
+                continue;
+            }
+            $logFilePath = $this->logsPath . $result['logs'][$i];
+            $result['logs'][$i] = [
+                'filename' => $result['logs'][$i],
+                'content' => $this->logsHandler->countLogLevels($logFilePath),
+            ];
+        }
 
         return $this->render($this->viewPrefix . 'logs', [
             'logs'  => $result['logs'],
@@ -71,11 +89,14 @@ class LogsController extends AdminController
 
         $result = $this->logsHandler->paginateLogs($logs, $this->logsLimit);
 
+        $filePagerData = $this->logsHandler->getAdjacentLogFiles($file, $this->logsPath);
+
         return $this->render($this->viewPrefix . 'view_log', [
             'logFile'       => $file . $this->ext,
             'canDelete'     => 1,
             'logContent'    => $result['logs'],
             'pager'         => $result['pager'],
+            'filesPager'    => view($this->viewPrefix . '_pager', $filePagerData),
             'logFilePretty' => app_date(str_replace('log-', '', $file)),
         ]);
     }

@@ -84,7 +84,7 @@ require_once SUPPORTPATH . 'Config/Security.php';
 Services::autoloader()->initialize(new Autoload(), new Modules())->register();
 
 // **Bonfire** Ensure Bonfire namespaces are added early enough that the tests are aware
-$registrar = new Bonfire\Config\Registrar();
+Bonfire\Core\Namespaces::register();
 
 // Now load Composer's if it's available
 if (is_file(COMPOSER_PATH)) {

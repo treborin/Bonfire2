@@ -5,16 +5,18 @@ $this->extend('master') ?>
 $this->section('main') ?>
 <x-page-head>
     <a href="<?= site_url(ADMIN_AREA . '/tools/logs') ?>" class="back">&larr; <?= lang('Tools.logsModTitle')?></a>
-    <h2><?= lang('Tools.log') ?> : <?= $logFilePretty ?></h2>
+    <h2><?= lang('Tools.log') ?>: <?= $logFilePretty ?></h2>
 </x-page-head>
 
 <x-admin-box>
+
+    <div class="d-flex justify-content-end"><?= $filesPager  ?? '' ?></div>
 
     <div class="table-responsive">
         <table class="table table-hover nowrap" id="log">
             <tr>
                 <th><?= lang('Tools.level'); ?></th>
-                <th><?= lang('Tools.date'); ?></th>
+                <th><?= lang('Tools.time'); ?></th>
                 <th><?= lang('Tools.content'); ?></th>
 
             </tr>
@@ -26,7 +28,7 @@ $this->section('main') ?>
                     <?php endif ?>
                 >
                     <td class="text-<?= $log['class']; ?>">
-                        <span class="<?= $log['icon']; ?>" aria-hidden="true"></span>&nbsp;<?= $log['level'] ?>
+                        <span class="<?= $log['icon']; ?> d-inline" aria-hidden="true"></span>&nbsp;<span class="d-inline"><?= $log['level'] ?></span>
                     </td>
                     <td class="date"><?= app_date($log['date'], true) ?></td>
                     <td class="text">

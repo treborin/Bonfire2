@@ -21,31 +21,29 @@
                                 <input class="select-all" type="checkbox" />
                             </th>
                         <?php endif ?>
-                        <th class='date'><?= lang('Tools.date'); ?></th>
-                        <th><?= lang('Tools.file'); ?></th>
+                        <th class='date no-wrap'><?= lang('Tools.date'); ?></th>
+                        <th><?= lang('Tools.content'); ?></th>
+                        <th class="d-none d-lg-table-cell"><?= lang('Tools.file'); ?></th>
                     </tr>
                 </thead>
 
                 <tbody>
                     <?php
                     foreach ($logs as $log) :
-                        // Skip the index.html file.
-                        if ($log === 'index.html') {
-                            continue;
-                        }
                         ?>
                     <tr>
                         <?php if (auth()->user()->can('logs.manage')) : ?>
                             <td class="column-check text-center">
-                                <input type="checkbox" value="<?= esc(str_replace('.log', '', $log)); ?>" name="checked[]" />
+                                <input type="checkbox" value="<?= esc(str_replace('.log', '', $log['filename'])); ?>" name="checked[]" />
                             </td>
                         <?php endif ?>
-                        <td class='date'>
-                            <a href='<?= site_url(ADMIN_AREA . "/tools/view-log/" . str_replace('.log', '', $log)); ?>'>
-                                <?= app_date(str_replace('.log', '', str_replace('log-', '', $log))); ?>
+                        <td class='date no-wrap'>
+                            <a href='<?= site_url(ADMIN_AREA . "/tools/view-log/" . str_replace('.log', '', $log['filename'])); ?>'>
+                                <?= app_date(str_replace('.log', '', str_replace('log-', '', $log['filename']))); ?>
                             </a>
                         </td>
-                        <td><?= esc($log); ?></td>
+                        <td><?= $log['content'] ?></td>
+                        <td class="d-none d-lg-table-cell"><?= esc($log['filename']) ?></td>
                     </tr>
                         <?php
                     endforeach;
