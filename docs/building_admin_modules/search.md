@@ -8,7 +8,8 @@ Advanced Search form, and by providing results that will be displayed.
 
 The most basic integration is to register your module as a search provider. This is done by creating a class at
 the root of your module's code called `SearchProvider`. It must extend `Bonfire\Search\Interfaces\SearchProviderInterface`
-and fill in a few small methods.
+and fill in a few small methods. Below is an example search provider
+for module Users.
 
 ```php
 <?php
@@ -16,7 +17,7 @@ and fill in a few small methods.
 namespace Bonfire\Users;
 
 use Bonfire\Search\Interfaces\SearchProviderInterface;
-use App\Models\UserModel;
+use Bonfire\Users\Models\UserModel;
 
 class SearchProvider extends UserModel implements SearchProviderInterface
 {
@@ -29,9 +30,17 @@ class SearchProvider extends UserModel implements SearchProviderInterface
      *
      * @return array
      */
-    public function search(string $term, int $limit=10, array $post=null): array
+    public function search(string $term, int $limit = 10, array $post = null): array
     {
-        //
+        return $this->select('users.*')
+            ->distinct()
+            ->join('auth_identities', 'auth_identities.user_id = users.id', 'inner')
+            ->like('first_name', $term, 'right', true, true)
+            ->orlike('last_name', $term, 'right', true, true)
+            ->orLike('username', $term, 'right', true, true)
+            ->orLike('secret', $term, 'both', true, true)
+            ->orderBy('first_name', 'asc')
+            ->findAll($limit);
     }
 
     /**
@@ -74,6 +83,54 @@ class SearchProvider extends UserModel implements SearchProviderInterface
 Given the search term it will return an array of any search results for this resource type. You'll see this SearcProvider
 extends the UserModel. It is not necessary to do so, but is a simple way to get access to the model features when you
 need them.
+
+If you want the search to find not only the data from the main table, but also
+the related meta info (see [User Meta Info](../users_and_security/user_meta.md)), you should:
+
+1. Put a property `$includeMetaFieldsInSearech` into the module config file
+    (example for `app/Config/Users.php`, since, suppose, we want to be able to search
+    for users by their blog urls, which we keep in the `meta_info` table):
+
+    ```php
+        public $includeMetaFieldsInSearech = [
+        'blog',
+        ];
+    ```
+
+2. Employ `Bonfire\Core\Traits\SearchInMeta` trait: put `use Bonfire\Core\Traits\SearchInMeta;` before the SearchProvider class declaration and `use SearchInMeta` after the class declaration;
+
+3. Write the `search()` method employing the trait methods `joinMetaInfo` and `orLikeInMetaInfo()` when constructing the query:
+
+    ```php
+    public function search(string $term, int $limit = 10, ?array $post = null): array
+    {
+        $query = $this->select('users.*')->distinct();
+        $query->join('auth_identities', 'auth_identities.user_id = users.id', 'inner');
+
+        $searchInMeta = setting('Users.includeMetaFieldsInSearech');
+
+        if (!empty($searchInMeta)) {
+            // first argument is the resource entity name, second – the DB table name
+            $query->joinMetaInfo('Bonfire\Users\User', 'users');
+        }
+
+        $query->like('first_name', $term, 'right', true, true)
+            ->orlike('last_name', $term, 'right', true, true)
+            ->orLike('username', $term, 'right', true, true)
+            ->orLike('secret', $term, 'both', true, true);
+
+        if (!empty($searchInMeta)) {
+            foreach ($searchInMeta as $metaField) {
+                // here syntax almost exactly like that of orLike()
+                $query->orLikeInMetaInfo($metaField, $term, 'both', true, true);
+            }
+        }
+
+        $query->orderBy('first_name', 'asc');
+
+        return $query->findAll($limit);
+    }
+    ```
 
 **resourceName()**
 
