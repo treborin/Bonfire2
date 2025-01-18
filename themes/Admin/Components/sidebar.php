@@ -39,7 +39,7 @@
                         <?php foreach ($collection->items() as $item) : ?>
                             <?php if ($item->userCanSee()): ?>
                                 <li class="nav-item">
-                                    <a class="nav-link <?= url_is($item->url . '*') ? 'active' : '' ?>" href="<?= $item->url ?>">
+                                    <a class="nav-link <?= url_is($item->url . '*') ? 'active' : '' ?>" href="<?= site_url($item->url) ?>">
                                         <?php if (! $collection->isCollapsible()) : ?>
                                             <?= $item->icon ?>
                                         <?php endif ?>
