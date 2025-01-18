@@ -196,8 +196,7 @@ class ChartsItem implements Item
      */
     public function setChartName(string $chartName = ''): ChartsItem
     {
-        $time = str_replace('.', '_', (string) microtime(true));
-        $this->chartName .= $chartName . '_' . $time;
+        $this->chartName .= $chartName . '_' . (string) hrtime(true);
 
         return $this;
     }
