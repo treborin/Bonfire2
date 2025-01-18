@@ -2,7 +2,29 @@
 
 This holds the change history for Bonfire as we lead up to a 1.0 release. It's not exhaustive, but should give you a good idea of the changes that have been made and how it might impact you.
 
-IMPORTANT! *Breaking changes* are marked with words `breaking change` in parentheses right after the date.
+**IMPORTANT!** *Breaking changes* are marked with words `breaking change` in parentheses right after the date.
+
+## 18 January 2024 (breaking change)
+
+Possibility to have Second Factor Authentication is added to Bonfire2, implementing Codeigniter Shield
+feature.
+
+To use the feature on existing installs you will first need to update the userspace Config file `app/Config/Auth.php`,
+in particular – the property `$views`, two keys relating to 2FA to look like this:
+
+```php
+    'action_email_2fa'        => '\Bonfire\Views\Auth\email_2fa_show',
+    'action_email_2fa_verify' => '\Bonfire\Views\Auth\email_2fa_verify',
+```
+
+Failing to do that and enabling 2FA in the admin area will lock the users out of your website.
+
+To fix it, after modifying the config file, issue this command on your database to clean up references 
+to wrong classes:
+
+```sql
+DELETE FROM settings WHERE class="Config\Auth" AND key="actions";
+```
 
 ## 16 January 2024
 
