@@ -111,11 +111,11 @@ class ComponentRenderer
                             )
                     /uismx';
 
-    /*
-        $match['name']       = tag name (minus the `x-`)
-        $match['attributes'] = string of tag attributes (class="foo")
-        $match['slot']       = the content inside the tags
-    */
+        /*
+            $match['name']       = tag name (minus the `x-`)
+            $match['attributes'] = string of tag attributes (class="foo")
+            $match['slot']       = the content inside the tags
+        */
 
         do {
             try {
