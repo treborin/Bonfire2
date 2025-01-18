@@ -4,6 +4,11 @@ This holds the change history for Bonfire as we lead up to a 1.0 release. It's n
 
 **IMPORTANT!** *Breaking changes* are marked with words `breaking change` in parentheses right after the date.
 
+## 19 January 2024
+
+Resource Meta Info (if you have configured such) can now be included in the Admin area search (see docs page
+[Search](../building_admin_modules/search.md) for details).
+
 ## 18 January 2024 (breaking change)
 
 Possibility to have Second Factor Authentication is added to Bonfire2, implementing Codeigniter Shield
