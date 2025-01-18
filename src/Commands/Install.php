@@ -108,6 +108,7 @@ class Install extends BaseCommand
             $this->setAutoloadHelpers();
             $this->setSecurityCSRF();
             $this->publishThemes();
+            $this->updateComposerJson();
 
             CLI::newLine();
             CLI::write('If you need to create your database, you may run:', 'yellow');
@@ -120,6 +121,8 @@ class Install extends BaseCommand
             $this->migrate();
             $this->createUser();
         }
+
+        $this->call('update:composer-json');
 
         CLI::newLine();
     }
@@ -400,5 +403,46 @@ class Install extends BaseCommand
 
         error("  Error updating {$cleanPath}.");
 
+    }
+
+    /**
+     * Updates the user's composer.json to include Bonfire update scripts.
+     */
+    private function updateComposerJson()
+    {
+        $composerJsonPath = ROOTPATH . 'composer.json';
+
+        if (!file_exists($composerJsonPath)) {
+            CLI::write("composer.json not found.", 'red');
+            return;
+        }
+
+        $composerJson = json_decode(file_get_contents($composerJsonPath), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            CLI::write("Error decoding composer.json: " . json_last_error_msg(), 'red');
+            return;
+        }
+
+        // Ensure the scripts section exists
+        if (!isset($composerJson['scripts'])) {
+            $composerJson['scripts'] = [];
+        }
+
+        // Ensure the post-update-cmd section exists
+        if (!isset($composerJson['scripts']['post-update-cmd'])) {
+            $composerJson['scripts']['post-update-cmd'] = [];
+        }
+
+        // Add the Bonfire update script if it's not already present
+        $bonfireUpdateScript = "php spark notify:breaking-changes";
+        if (!in_array($bonfireUpdateScript, $composerJson['scripts']['post-update-cmd'])) {
+            $composerJson['scripts']['post-update-cmd'][] = $bonfireUpdateScript;
+        }
+
+        // Save the updated composer.json
+        file_put_contents($composerJsonPath, json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        CLI::write("composer.json updated successfully.", 'green');
     }
 }
