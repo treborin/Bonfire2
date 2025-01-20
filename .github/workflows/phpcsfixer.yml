@@ -37,7 +37,7 @@ jobs:
         run: echo "COMPOSER_CACHE_FILES_DIR=$(composer config cache-files-dir)" >> $GITHUB_ENV
 
       - name: Cache composer dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ env.COMPOSER_CACHE_FILES_DIR }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}-${{ hashFiles('**/composer.lock') }}
@@ -52,4 +52,4 @@ jobs:
           fi
 
       - name: Check code for standards compliance
-        run: vendor/bin/php-cs-fixer fix --verbose --ansi --dry-run --using-cache=no --diff
+        run: vendor/bin/php-cs-fixer --config=.config/.php-cs-fixer.dist.php fix --verbose --ansi --dry-run --using-cache=no --diff

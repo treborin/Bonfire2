@@ -1,13 +1,13 @@
 {
   "name": "lonnieezell/bonfire",
   "type": "project",
-  "description": "Drop-in admin panel form CodeIgniter 4",
+  "description": "Drop-in admin panel for CodeIgniter 4",
   "keywords": [
     "codeigniter",
     "codeigniter4",
     "bonfire"
   ],
-  "homepage": "https://github.com/lonnieezell/bonfire2-refactor",
+  "homepage": "https://github.com/lonnieezell/bonfire2",
   "license": "MIT",
   "require": {
     "php": "^7.4 || ^8.0",
@@ -58,16 +58,18 @@
       "@rector-fix"
     ],
     "deduplicate": "phpcpd src/",
-    "inspect": "deptrac analyze --cache-file=build/deptrac.cache",
+    "inspect": "vendor/bin/deptrac analyze --cache-file=build/deptrac.cache",
     "lint": "vendor/bin/parallel-lint --exclude .git --exclude vendor .",
-    "rector": "rector process --config .config/rector.php --dry-run",
-    "rector-fix": "rector process --config .config/rector.php",
-    "style": "php-cs-fixer fix --config=.config/.php-cs-fixer.dist.php --dry-run",
-    "style-fix": "php-cs-fixer --config=.config/.php-cs-fixer.dist.php fix",
+    "rector": "vendor/bin/rector process --config .config/rector.php --dry-run",
+    "rector-fix": "vendor/bin/rector process --config .config/rector.php",
+    "style": "vendor/bin/php-cs-fixer fix --config=.config/.php-cs-fixer.dist.php --dry-run",
+    "style-fix": "vendor/bin/php-cs-fixer --config=.config/.php-cs-fixer.dist.php fix",
     "test": "./vendor/bin/phpunit"
   },
   "support": {
     "forum": "https://forum.codeigniter.com/",
-    "source": "https://github.com/lonnieezell/bonfire2-internals"
+    "source": "https://github.com/lonnieezell/bonfire2",
+    "issues": "https://github.com/lonnieezell/Bonfire2/issues",
+    "docs": "https://lonnieezell.github.io/Bonfire2/"
   }
 }

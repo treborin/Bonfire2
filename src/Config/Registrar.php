@@ -2,36 +2,33 @@
 
 namespace Bonfire\Config;
 
-use Config\Filters;
-use CodeIgniter\Autoloader\Autoloader;
 use Bonfire\Auth\Filters\Admin;
 use Bonfire\Consent\Filters\ConsentFilter;
 use Bonfire\Core\Filters\OnlineCheck;
 use Bonfire\Users\Validation\UserRules;
 use Bonfire\View\Decorator;
+use CodeIgniter\Autoloader\Autoloader;
 use CodeIgniter\Shield\Authentication\Passwords\ValidationRules as PasswordRules;
 use CodeIgniter\Shield\Filters\ChainAuth;
 use CodeIgniter\Shield\Filters\SessionAuth;
 use CodeIgniter\Shield\Filters\TokenAuth;
+use Config\Filters;
 use ReflectionClass;
-use ReflectionProperty;
 
 include_once __DIR__ . '/Constants.php';
 include_once __DIR__ . '/../Common.php';
 
 class Registrar
 {
-    private static $nonModuleFolders = [
-        'Config', 'Core',
-    ];
-
     public static function Pager(): array
     {
         return [
             'templates' => [
-                'bonfire_full'   => 'Bonfire\Views\_pager_full',
-                'bonfire_simple' => 'Bonfire\Views\_pager_simple',
-                'bonfire_head'   => 'Bonfire\Views\_pager_head',
+                'bonfire_full'      => 'Bonfire\Views\_pager_full',
+                'bonfire_full_hx'   => 'Bonfire\Views\_pager_full_htmx',
+                'bonfire_simple'    => 'Bonfire\Views\_pager_simple',
+                'bonfire_simple_hx' => 'Bonfire\Views\_pager_simple_htmx',
+                'bonfire_head'      => 'Bonfire\Views\_pager_head',
             ],
         ];
     }
@@ -100,64 +97,5 @@ class Registrar
         ];
     }
 
-    /**
-     * Registers all Bonfire Module namespaces and app module namespaces
-     */
-    public static function registerNamespaces(): void
-    {
-        helper('filesystem');
-        $map = directory_map(__DIR__ . '/../', 1);
-        /** @var Autoloader $autoloader */
-        $autoloader = service('autoloader');
 
-        $namespaces = [];
-
-        foreach ($map as $row) {
-            if (substr($row, -1) !== DIRECTORY_SEPARATOR || in_array(trim($row, '/ '), self::$nonModuleFolders, true)) {
-                continue;
-            }
-
-            $name = trim($row, DIRECTORY_SEPARATOR);
-
-            $namespaces["Bonfire\\{{$name}}"] = [realpath(__DIR__ . "/../{$name}")];
-        }
-
-        // Now define app modules nemespaces
-        $appModulesPaths = config('Bonfire')->appModules;
-
-        if (is_array($appModulesPaths) && $appModulesPaths !== []) {
-            foreach ($appModulesPaths as $baseName => $path) {
-                if (! file_exists($path)) {
-                    continue;
-                }
-
-                $map = directory_map($path, 1);
-                foreach ($map as $row) {
-
-                    $name = trim($row, DIRECTORY_SEPARATOR);
-
-                    $namespaces[$baseName . "\\{{$name}}"] = [realpath($path . "/{$name}")];
-                }
-            }
-        }
-
-        // Insert the namespaces into the psr4 array in the autoloader
-        // to ensure that Bonfire's files get loader prior to vendor files
-        $rp = new ReflectionProperty($autoloader, 'prefixes');
-        $rp->setAccessible(true);
-
-        $prefixes = $rp->getValue($autoloader);
-        $keys     = array_keys($prefixes);
-
-        $prefixesStart = array_slice($prefixes, 0, array_search('Tests\\Support', $keys, true) + 1);
-        $prefixesEnd   = array_slice($prefixes, array_search('Tests\\Support', $keys, true) + 1);
-        $prefixes      = array_merge($prefixesStart, $namespaces, $prefixesEnd);
-
-        $rp->setValue($autoloader, $prefixes);
-    }
 }
-
-// This is hacky but will ensure all
-// Bonfire namespaces have been registered
-// with the system and are found automatically.
-Registrar::registerNamespaces();

@@ -20,9 +20,11 @@ return [
     'unknownError'         => 'Errore sconosciuto.',
     'resourcesNotSelected' => 'Nessun {0} selezionato.',
 
-    'deleteResource' => 'Eliminare questo {0}?',
-    'delete'         => 'Elimina',
-    'edit'           => 'Modifica',
+    'deleteSelectedConfirm' => 'Sei sicuro di voler eliminare i {0} selezionati?',
+    'deleteResource'        => 'Eliminare questo {0}?',
+    'delete'                => 'Elimina',
+    'edit'                  => 'Modifica',
+    'deleteSelected'        => 'Elimina selezionati',
 
     'notAuthorized' => 'Non hai i permessi per accedere.',
     'unknownAction' => 'L\'azione da te richiesta non è stata riconosciuta.',
@@ -31,32 +33,32 @@ return [
     'lastModified' => 'Ultima modifica',
     'fileSize'     => 'Dimensione del file',
 
-    //collections:
-    'contentModTitle'   => 'Contenuto',
-    'settingsModTitle'  => 'Impostazioni',
-    'toolsModTitle'     => 'Strumenti',
-    'generalModTitle'   => 'Generali',
+    // collections:
+    'contentModTitle'  => 'Contenuto',
+    'settingsModTitle' => 'Impostazioni',
+    'toolsModTitle'    => 'Strumenti',
+    'generalModTitle'  => 'Generali',
 
-    //theme:
-    'filter'            => 'Filtro',
-    'dashboard'         => 'Dashboard',
-    'searchResults'     => 'Risultati della ricerca',
-    'nothingFound'      => 'Nessun risultato per i tuoi criteri di ricerca. Rivedi i criteri di ricerca e riprova.',
-    'seeAll'            => 'Visualizza tutto',
-    'search'            => 'Cerca',
-    'myAccount'         => 'Il mio profilo',
-    'signOut'           => 'Esci',
-    'offlineNotice'     => 'Il sito è attualmente non in linea. Attivalo.',
-    'here'              => 'qui',
-    'collapseSidebar'   => 'Minimizza la barra laterale',
+    // theme:
+    'filter'          => 'Filtro',
+    'dashboard'       => 'Dashboard',
+    'searchResults'   => 'Risultati della ricerca',
+    'nothingFound'    => 'Nessun risultato per i tuoi criteri di ricerca. Rivedi i criteri di ricerca e riprova.',
+    'seeAll'          => 'Visualizza tutto',
+    'search'          => 'Cerca',
+    'myAccount'       => 'Il mio profilo',
+    'signOut'         => 'Esci',
+    'offlineNotice'   => 'Il sito è attualmente non in linea. Attivalo.',
+    'here'            => 'qui',
+    'collapseSidebar' => 'Minimizza la barra laterale',
+    'actionsCol'      => 'Azioni',
 
     // Dashboard:
-    'quickLinks'        => 'Collegamenti veloci',
+    'quickLinks' => 'Collegamenti veloci',
 
-    //users module Search template:
-    'email'         => 'Email',
-    'username'      => 'nome utente',
-    'groups'        => 'Ruoli',
-    'lastActive'    => 'Ultima attività',
-
+    // users module Search template:
+    'email'      => 'Email',
+    'username'   => 'nome utente',
+    'groups'     => 'Ruoli',
+    'lastActive' => 'Ultima attività',
 ];
